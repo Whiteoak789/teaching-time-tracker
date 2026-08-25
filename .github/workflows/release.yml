@@ -40,12 +40,14 @@ jobs:
         run: |
           release_id=$(gh api "repos/${GITHUB_REPOSITORY}/releases" --paginate --jq ".[] | select(.tag_name == \"${TAG}\") | .id" | head -n 1)
           if [ -z "$release_id" ]; then
-            gh release create "$TAG" \
-              --draft \
-              --target "$GITHUB_SHA" \
-              --title "Teaching Time Tracker ${VERSION}" \
-              --notes-file RELEASE_NOTES.md
-            release_id=$(gh api "repos/${GITHUB_REPOSITORY}/releases" --paginate --jq ".[] | select(.tag_name == \"${TAG}\") | .id" | head -n 1)
+            release_id=$(gh api --method POST "repos/${GITHUB_REPOSITORY}/releases" \
+              --raw-field tag_name="$TAG" \
+              --raw-field target_commitish="$GITHUB_SHA" \
+              --raw-field name="Teaching Time Tracker ${VERSION}" \
+              --field draft=true \
+              --field prerelease=false \
+              --field body=@RELEASE_NOTES.md \
+              --jq '.id')
           fi
           echo "release_id=${release_id}" >> "$GITHUB_OUTPUT"
 
