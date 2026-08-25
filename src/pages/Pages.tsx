@@ -2032,7 +2032,7 @@ export function SettingsPage() {
               </span>
               <div>
                 <h3>Teaching Time Tracker</h3>
-                <p>Version 1.0.0 · Tauri 2 desktop application</p>
+                <p>Version 1.0.1 · Tauri 2 desktop application</p>
               </div>
             </header>
             <p>

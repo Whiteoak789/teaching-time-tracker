@@ -1,19 +1,18 @@
-# Teaching Time Tracker 1.0.0
+# Teaching Time Tracker 1.0.1
 
-The first desktop release of Teaching Time Tracker: a private, local-first workspace for student teachers.
+This maintenance release keeps every section accessible at all supported window sizes.
 
 ## Downloads
 
 - **macOS:** Choose the `macOS_universal.dmg` file. Open it and drag the app into Applications.
 - **Windows:** Choose the `Windows_x64-setup.exe` file and run the installer.
 
-## Highlights
+## Improvements
 
-- Calendar-first clinical time entry with month, week, and list views
-- Semester requirements, timesheets, verification, goals, and progress reporting
-- Notes, reminders, categories, search, themes, and keyboard shortcuts
-- CSV, JSON, printable, and PDF exports
-- Local SQLite storage with encrypted backup and validated restore
+- Restores vertical scrolling in every tab when content is taller than the window
+- Keeps the navigation sidebar independently scrollable at shorter window heights
+- Prevents page content and the calendar side panel from being clipped horizontally
+- Preserves the fixed top bar while the active section scrolls beneath it
 
 ## First-run security notice
 

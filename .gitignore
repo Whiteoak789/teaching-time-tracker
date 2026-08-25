@@ -9,6 +9,10 @@ src-tauri/target/
 .env
 .env.*
 .DS_Store
+._*
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
 .idea/
 .vscode/
 coverage/
