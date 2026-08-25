@@ -6,7 +6,7 @@ A calm, private desktop workspace for student teachers to record clinical practi
 
 ## Download
 
-[**Download for macOS (Universal DMG)**](https://github.com/Whiteoak789/teaching-time-tracker/releases/download/v1.0.1/Teaching-Time-Tracker_1.0.1_macOS_universal.dmg) · [**Download for Windows (Setup EXE)**](https://github.com/Whiteoak789/teaching-time-tracker/releases/download/v1.0.1/Teaching-Time-Tracker_1.0.1_Windows_x64-setup.exe) · [Release notes](https://github.com/Whiteoak789/teaching-time-tracker/releases/latest)
+[**Download for macOS (Universal DMG)**](https://github.com/Whiteoak789/teaching-time-tracker/releases/download/v1.0.2/Teaching-Time-Tracker_1.0.2_macOS_universal.dmg) · [**Download for Windows (Setup EXE)**](https://github.com/Whiteoak789/teaching-time-tracker/releases/download/v1.0.2/Teaching-Time-Tracker_1.0.2_Windows_x64-setup.exe) · [Release notes](https://github.com/Whiteoak789/teaching-time-tracker/releases/latest)
 
 - **macOS:** Download the universal `.dmg`, open it, and drag Teaching Time Tracker into Applications. It supports both Apple Silicon and Intel Macs.
 - **Windows:** Download the setup `.exe` and run it. The installer creates the app entry and uninstall support automatically.
@@ -46,7 +46,7 @@ npm run tauri:build
 
 ## Publishing a release
 
-Pushing a version tag such as `v1.0.1`, or manually running the **Release installers** workflow, builds both installers on GitHub-hosted macOS and Windows machines. The workflow keeps the release as a draft until both platform builds succeed, then publishes it with stable asset names.
+Pushing a version tag such as `v1.0.2`, or manually running the **Release installers** workflow, builds both installers on GitHub-hosted macOS and Windows machines. The workflow keeps the release as a draft until both platform builds succeed, then publishes it with stable asset names.
 
 ## Project structure
 

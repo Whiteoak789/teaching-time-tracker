@@ -1,6 +1,6 @@
-# Teaching Time Tracker 1.0.1
+# Teaching Time Tracker 1.0.2
 
-This maintenance release keeps every section accessible at all supported window sizes.
+This visual refresh gives Teaching Time Tracker a friendly, teacher-focused identity.
 
 ## Downloads
 
@@ -9,10 +9,10 @@ This maintenance release keeps every section accessible at all supported window 
 
 ## Improvements
 
-- Restores vertical scrolling in every tab when content is taller than the window
-- Keeps the navigation sidebar independently scrollable at shorter window heights
-- Prevents page content and the calendar side panel from being clipped horizontally
-- Preserves the fixed top bar while the active section scrolls beneath it
+- Adds a new red apple and open-book application icon
+- Provides crisp icon assets for macOS, Windows, and every bundled resolution
+- Matches the in-app navigation mark to the new teacher-themed identity
+- Includes all scrolling and responsive layout fixes from version 1.0.1
 
 ## First-run security notice
 
