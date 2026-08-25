@@ -6,7 +6,7 @@ A calm, private desktop workspace for student teachers to record clinical practi
 
 ## Download
 
-[**Download the latest installer for macOS or Windows**](https://github.com/Whiteoak789/teaching-time-tracker/releases/latest)
+[**Download for macOS (Universal DMG)**](https://github.com/Whiteoak789/teaching-time-tracker/releases/download/v1.0.0/Teaching-Time-Tracker_1.0.0_macOS_universal.dmg) · [**Download for Windows (Setup EXE)**](https://github.com/Whiteoak789/teaching-time-tracker/releases/download/v1.0.0/Teaching-Time-Tracker_1.0.0_Windows_x64-setup.exe) · [Release notes](https://github.com/Whiteoak789/teaching-time-tracker/releases/latest)
 
 - **macOS:** Download the universal `.dmg`, open it, and drag Teaching Time Tracker into Applications. It supports both Apple Silicon and Intel Macs.
 - **Windows:** Download the setup `.exe` and run it. The installer creates the app entry and uninstall support automatically.
