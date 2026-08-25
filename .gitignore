@@ -1,0 +1,14 @@
+node_modules/
+node_modules.partial/
+dist/
+src-tauri/target/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.teachingtracker
+.env
+.env.*
+.DS_Store
+.idea/
+.vscode/
+coverage/

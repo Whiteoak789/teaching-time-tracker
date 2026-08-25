@@ -1,0 +1,121 @@
+name: Release installers
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepare-release:
+    name: Prepare GitHub release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      release_id: ${{ steps.release.outputs.release_id }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Read application version
+        id: version
+        shell: bash
+        run: |
+          version=$(node -p "require('./src-tauri/tauri.conf.json').version")
+          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Create or reuse draft release
+        id: release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          release_id=$(gh api "repos/${GITHUB_REPOSITORY}/releases" --paginate --jq ".[] | select(.tag_name == \"${TAG}\") | .id" | head -n 1)
+          if [ -z "$release_id" ]; then
+            gh release create "$TAG" \
+              --draft \
+              --target "$GITHUB_SHA" \
+              --title "Teaching Time Tracker ${VERSION}" \
+              --notes-file RELEASE_NOTES.md
+            release_id=$(gh api "repos/${GITHUB_REPOSITORY}/releases" --paginate --jq ".[] | select(.tag_name == \"${TAG}\") | .id" | head -n 1)
+          fi
+          echo "release_id=${release_id}" >> "$GITHUB_OUTPUT"
+
+  build-installers:
+    name: Build ${{ matrix.name }} installer
+    needs: prepare-release
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS Universal
+            platform: macos-latest
+            args: --target universal-apple-darwin --bundles dmg
+            asset_pattern: Teaching-Time-Tracker_[version]_macOS_universal.[ext]
+          - name: Windows x64
+            platform: windows-latest
+            args: --bundles nsis
+            asset_pattern: Teaching-Time-Tracker_[version]_Windows_x64[setup].[ext]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Cache Rust build artifacts
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: ./src-tauri -> target
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build and upload installer
+        uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          releaseId: ${{ needs.prepare-release.outputs.release_id }}
+          tagName: ${{ needs.prepare-release.outputs.tag }}
+          args: ${{ matrix.args }}
+          releaseAssetNamePattern: ${{ matrix.asset_pattern }}
+          uploadUpdaterJson: false
+          uploadUpdaterSignatures: false
+          retryAttempts: 1
+
+  publish-release:
+    name: Publish completed release
+    needs:
+      - prepare-release
+      - build-installers
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+        run: gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false --latest
