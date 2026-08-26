@@ -1,6 +1,6 @@
 [package]
 name = "teaching-time-tracker"
-version = "1.0.2"
+version = "1.0.3"
 description = "A private, local-first clinical teaching time tracker"
 authors = ["Teaching Time Tracker"]
 edition = "2021"

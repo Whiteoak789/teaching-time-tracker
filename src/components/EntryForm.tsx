@@ -60,5 +60,210 @@ export default function EntryForm() {
     verifier_initials: values.verifier_initials, attachment_reference: values.attachment_reference, recurrence_group_id: editing?.recurrence_group_id ?? null,
   });
 
-  return <Modal open={entryModalOpen} onClose={closeEntryModal} title={editing ? "Edit time entry" : "Add time"} subtitle="Record the work that made today count." className="entry-modal"><form onSubmit={handleSubmit(submit)}><div className="modal-scroll"><div className="form-section"><h3>Time & category</h3><div className="form-grid"><Field label="Date"><Input type="date" min={activeSemester.start_date} max={activeSemester.end_date} {...register("entry_date")} /></Field><Field label="Category" error={errors.category_id?.message}><select className="input" {...register("category_id", { onChange: (event) => updateCategoryDefaults(event.target.value) })}>{data.categories.filter((item) => item.active).map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></Field><div className="field-wide compact-toggles"><Toggle checked={allDay} onChange={(value) => { setValue("all_day", value); if (value) setValue("duration_hours", activeSemester.full_day_threshold); }} label="All day" /></div>{!allDay && <><Field label="Start time"><Input type="time" {...register("start_time")} /></Field><Field label="End time" error={errors.end_time?.message}><Input type="time" {...register("end_time")} /></Field></>}<Field label="Duration (hours)" hint="You can edit this manually"><Input type="number" min="0" max="24" step="0.25" {...register("duration_hours", { valueAsNumber: true })} /></Field><Field label="Day-credit override" hint="Leave blank for automatic"><Input type="number" min="0" max="2" step="0.25" placeholder="Automatic" {...register("day_credit_override", { setValueAs: (value) => value === "" ? "" : Number(value) })} /></Field></div><div className="inline-toggles"><Toggle checked={countsClinical} onChange={(value) => setValue("counts_clinical", value)} label="Count toward clinical days" /><Toggle checked={countsPd} onChange={(value) => setValue("counts_pd", value)} label="Count toward PD" /></div></div><div className="form-section"><h3>Details</h3><div className="form-grid"><Field label="Location / school"><Input {...register("location")} /></Field><Field label="Teacher / supervisor"><Input {...register("teacher")} /></Field><Field label="Description" wide><Input placeholder="What did you work on?" {...register("description")} /></Field><Field label="Notes" wide><textarea className="input textarea" placeholder="Optional private notes" {...register("notes")} /></Field><Field label="Attachment / reference" wide><Input placeholder="File path, document name, or URL" {...register("attachment_reference")} /></Field></div></div><div className="form-section"><h3>Verification</h3><div className="inline-toggles"><Toggle checked={verificationRequired} onChange={(value) => { setValue("verification_required", value); if (!value) setValue("verified", false); }} label="Verification required" /><Toggle checked={verified} onChange={(value) => setValue("verified", value)} label="Verified" /></div>{verificationRequired && <div className="form-grid verify-fields"><Field label="Verifier name"><Input {...register("verifier_name")} /></Field><Field label="Initials"><Input maxLength={8} {...register("verifier_initials")} /></Field></div>}</div></div><footer className="modal-actions"><div>{editing && <><Button type="button" variant="danger" onClick={async () => { if (confirm("Delete this time entry? This action can be recovered from a backup.")) { await deleteEntry(editing.id); closeEntryModal(); } }}><Trash2 size={16} /> Delete</Button><Button type="button" variant="ghost" onClick={async () => { setData(await duplicateTimeEntry(editing.id, editing.entry_date)); closeEntryModal(); }}><Copy size={16} /> Duplicate</Button></>}</div><div><Button type="button" variant="secondary" onClick={closeEntryModal}>Cancel</Button><Button type="submit" disabled={saving}><Save size={16} /> {editing ? "Save changes" : "Add time"}</Button></div></footer></form></Modal>;
+  return (
+    <Modal
+      open={entryModalOpen}
+      onClose={closeEntryModal}
+      title={editing ? "Edit time entry" : "Add time"}
+      subtitle="Record the work that made today count."
+      className="entry-modal"
+    >
+      <form
+        id="entry-time-form"
+        className="modal-scroll"
+        onSubmit={handleSubmit(submit)}
+      >
+        <div className="form-section">
+          <h3>Time & category</h3>
+          <div className="form-grid">
+            <Field label="Date">
+              <Input
+                type="date"
+                min={activeSemester.start_date}
+                max={activeSemester.end_date}
+                {...register("entry_date")}
+              />
+            </Field>
+            <Field label="Category" error={errors.category_id?.message}>
+              <select
+                className="input"
+                {...register("category_id", {
+                  onChange: (event) => updateCategoryDefaults(event.target.value),
+                })}
+              >
+                {data.categories
+                  .filter((item) => item.active)
+                  .map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+              </select>
+            </Field>
+            <div className="field-wide compact-toggles">
+              <Toggle
+                checked={allDay}
+                onChange={(value) => {
+                  setValue("all_day", value);
+                  if (value) {
+                    setValue("duration_hours", activeSemester.full_day_threshold);
+                  }
+                }}
+                label="All day"
+              />
+            </div>
+            {!allDay && (
+              <>
+                <Field label="Start time">
+                  <Input type="time" {...register("start_time")} />
+                </Field>
+                <Field label="End time" error={errors.end_time?.message}>
+                  <Input type="time" {...register("end_time")} />
+                </Field>
+              </>
+            )}
+            <Field label="Duration (hours)" hint="You can edit this manually">
+              <Input
+                type="number"
+                min="0"
+                max="24"
+                step="0.25"
+                {...register("duration_hours", { valueAsNumber: true })}
+              />
+            </Field>
+            <Field
+              label="Day-credit override"
+              hint="Leave blank for automatic"
+            >
+              <Input
+                type="number"
+                min="0"
+                max="2"
+                step="0.25"
+                placeholder="Automatic"
+                {...register("day_credit_override", {
+                  setValueAs: (value) => value === "" ? "" : Number(value),
+                })}
+              />
+            </Field>
+          </div>
+          <div className="inline-toggles">
+            <Toggle
+              checked={countsClinical}
+              onChange={(value) => setValue("counts_clinical", value)}
+              label="Count toward clinical days"
+            />
+            <Toggle
+              checked={countsPd}
+              onChange={(value) => setValue("counts_pd", value)}
+              label="Count toward PD"
+            />
+          </div>
+        </div>
+
+        <div className="form-section">
+          <h3>Details</h3>
+          <div className="form-grid">
+            <Field label="Location / school">
+              <Input {...register("location")} />
+            </Field>
+            <Field label="Teacher / supervisor">
+              <Input {...register("teacher")} />
+            </Field>
+            <Field label="Description" wide>
+              <Input
+                placeholder="What did you work on?"
+                {...register("description")}
+              />
+            </Field>
+            <Field label="Notes" wide>
+              <textarea
+                className="input textarea"
+                placeholder="Optional private notes"
+                {...register("notes")}
+              />
+            </Field>
+            <Field label="Attachment / reference" wide>
+              <Input
+                placeholder="File path, document name, or URL"
+                {...register("attachment_reference")}
+              />
+            </Field>
+          </div>
+        </div>
+
+        <div className="form-section">
+          <h3>Verification</h3>
+          <div className="inline-toggles">
+            <Toggle
+              checked={verificationRequired}
+              onChange={(value) => {
+                setValue("verification_required", value);
+                if (!value) setValue("verified", false);
+              }}
+              label="Verification required"
+            />
+            <Toggle
+              checked={verified}
+              onChange={(value) => setValue("verified", value)}
+              label="Verified"
+            />
+          </div>
+          {verificationRequired && (
+            <div className="form-grid verify-fields">
+              <Field label="Verifier name">
+                <Input {...register("verifier_name")} />
+              </Field>
+              <Field label="Initials">
+                <Input maxLength={8} {...register("verifier_initials")} />
+              </Field>
+            </div>
+          )}
+        </div>
+      </form>
+
+      <footer className="modal-actions">
+        <div>
+          {editing && (
+            <>
+              <Button
+                type="button"
+                variant="danger"
+                onClick={async () => {
+                  if (confirm("Delete this time entry? This action can be recovered from a backup.")) {
+                    await deleteEntry(editing.id);
+                    closeEntryModal();
+                  }
+                }}
+              >
+                <Trash2 size={16} /> Delete
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={async () => {
+                  setData(await duplicateTimeEntry(editing.id, editing.entry_date));
+                  closeEntryModal();
+                }}
+              >
+                <Copy size={16} /> Duplicate
+              </Button>
+            </>
+          )}
+        </div>
+        <div>
+          <Button type="button" variant="secondary" onClick={closeEntryModal}>
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            form="entry-time-form"
+            disabled={saving}
+          >
+            <Save size={16} /> {editing ? "Save changes" : "Add time"}
+          </Button>
+        </div>
+      </footer>
+    </Modal>
+  );
 }

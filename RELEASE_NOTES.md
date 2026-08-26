@@ -1,6 +1,6 @@
-# Teaching Time Tracker 1.0.2
+# Teaching Time Tracker 1.0.3
 
-This visual refresh gives Teaching Time Tracker a friendly, teacher-focused identity.
+This maintenance release keeps the complete Add Time and Edit Time workflow reachable at every supported window height.
 
 ## Downloads
 
@@ -9,10 +9,10 @@ This visual refresh gives Teaching Time Tracker a friendly, teacher-focused iden
 
 ## Improvements
 
-- Adds a new red apple and open-book application icon
-- Provides crisp icon assets for macOS, Windows, and every bundled resolution
-- Matches the in-app navigation mark to the new teacher-themed identity
-- Includes all scrolling and responsive layout fixes from version 1.0.1
+- Makes the time-entry form independently scrollable when it is taller than the window
+- Keeps Cancel, Add Time, and Save Changes visible in a fixed dialog footer
+- Preserves access to attachments and verification fields at short window heights
+- Includes the teacher-themed icon and responsive layout improvements from earlier releases
 
 ## First-run security notice
 
